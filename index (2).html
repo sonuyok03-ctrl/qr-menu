@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Fresh QR Menü</title>
+
+<style>
+:root{
+  --bg1:#1b120c;
+  --bg2:#2a1a12;
+  --bg3:#120b07;
+
+  --card1:#2a1a12;
+  --card2:#1a100a;
+
+  --text:#f3efe8;
+  --muted:#c9c1b7;
+  --accent:#c6a56d;
+}
+
+*{ box-sizing:border-box; }
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  color:var(--text);
+  background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 45%,var(--bg3) 100%);
+}
+
+/* Sayfa genişliğini kontrol edip ortalıyoruz (desktop boşluk/taşma yok) */
+.container{
+  max-width:460px;              /* ✅ QR menü gibi dursun */
+  margin:0 auto;
+  padding:14px 16px 26px;
+}
+
+/* LOGO */
+header{
+  text-align:center;
+  padding:18px 0 4px;
+}
+.logo-img{
+  width:300px;                  /* ✅ LOGO BOYUTU */
+  height:auto;
+  display:inline-block;
+  cursor:pointer;
+  filter:
+    drop-shadow(0 10px 18px rgba(0,0,0,.6))
+    drop-shadow(0 0 22px rgba(198,165,109,.30));
+}
+
+/* HOME */
+.home-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:10px;
+}
+.home-card{
+  background:linear-gradient(145deg,var(--card1),var(--card2));
+  border-radius:18px;
+  padding:10px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+}
+.home-cover{
+  width:100%;
+  height:158px;                 /* ✅ Kapak fotoğrafları küçültüldü */
+  object-fit:cover;
+  border-radius:14px;
+  margin-bottom:8px;
+  display:block;
+}
+.home-title{
+  font-size:13.5px;
+  letter-spacing:.3px;
+}
+
+/* Dil seçimi */
+.lang{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:14px;
+}
+.lang button{
+  background:transparent;
+  border:1px solid rgba(198,165,109,.15);
+  color:var(--muted);
+  padding:6px 12px;
+  border-radius:12px;
+  font-size:12px;
+  cursor:pointer;
+}
+.lang button.active{
+  border-color:rgba(198,165,109,.6);
+  color:var(--accent);
+  background:rgba(198,165,109,.08);
+}
+
+/* MENÜ */
+.hidden{ display:none; }
+
+.menu-title{
+  text-align:center;
+  font-size:18px;
+  margin:8px 0 14px;
+  letter-spacing:.2px;
+}
+
+/* ✅ Alt alta list */
+.menu-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* ✅ Görsel + yazı ortalı */
+.menu-item{
+  background:linear-gradient(145deg,var(--card1),var(--card2));
+  border-radius:18px;
+  padding:14px 12px;
+  display:flex;
+  flex-direction:column;     /* ✅ alt alta */
+  align-items:center;        /* ✅ ortalı */
+  text-align:center;         /* ✅ yazı ortalı */
+  box-shadow:0 10px 24px rgba(0,0,0,.22);
+}
+
+.menu-item img{
+  width:72px;
+  height:72px;
+  border-radius:18px;
+  object-fit:cover;
+  display:block;
+  margin-bottom:10px;
+  box-shadow:0 10px 18px rgba(0,0,0,.30);
+}
+
+.menu-name{
+  font-size:15px;
+  font-weight:500;
+}
+
+/* BACK */
+.back{
+  margin-top:16px;
+  text-align:center;
+}
+.back button{
+  background:transparent;
+  border:1px solid rgba(198,165,109,.7);
+  color:var(--accent);
+  padding:9px 22px;
+  border-radius:14px;
+  font-size:14px;
+  cursor:pointer;
+}
+
+/* Mobilde 2 kolon dar gelirse */
+@media (max-width:360px){
+  .home-grid{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <img src="images/logo.png" class="logo-img" id="logo" alt="The Fresh Logo">
+</header>
+
+<div class="container">
+
+  <!-- HOME -->
+  <section id="home">
+    <div class="home-grid">
+      <div class="home-card" id="btnHot">
+        <img src="images/hot.jpg" class="home-cover" alt="Hot">
+        <div class="home-title" id="txtHomeHot">Sıcak İçecekler</div>
+      </div>
+
+      <div class="home-card" id="btnCold">
+        <img src="images/cold.jpg" class="home-cover" alt="Cold">
+        <div class="home-title" id="txtHomeCold">Soğuk İçecekler</div>
+      </div>
+    </div>
+
+    <div class="lang">
+      <button id="langTR" class="active" type="button">TR</button>
+      <button id="langEN" type="button">EN</button>
+    </div>
+  </section>
+
+  <!-- HOT -->
+  <section id="hot" class="hidden">
+    <div class="menu-title" id="txtHotTitle">☕ Sıcak İçecekler</div>
+    <div class="menu-list" id="hotList"></div>
+    <div class="back"><button type="button" id="backHot">← Geri</button></div>
+  </section>
+
+  <!-- COLD -->
+  <section id="cold" class="hidden">
+    <div class="menu-title" id="txtColdTitle">🧊 Soğuk İçecekler</div>
+    <div class="menu-list" id="coldList"></div>
+    <div class="back"><button type="button" id="backCold">← Geri</button></div>
+  </section>
+
+</div>
+
+<script>
+let lang = "tr";
+
+const DATA = {
+  hot: {
+    tr: [
+      ["Coffee Latte","latte.jpg"],
+      ["Americano","americano.jpg"],
+      ["Espresso","espresso.jpg"],
+      ["Lungo","lungo.jpg"],
+      ["Cappuccino","cappuccino.jpg"],
+      ["Latte Macchiatto","latte_macchiato.jpg"],
+      ["Ristretto","ristretto.jpg"],
+      ["Ristretto Bianco","ristretto_bianco.jpg"],
+      ["Cortado","cortado.jpg"],
+      ["Flat White","flat_white.jpg"],
+      ["Espresso Macchiato","espresso_macchiato.jpg"],
+      ["Doppio","doppio.jpg"],
+      ["Çay","tea.jpg"]
+    ],
+    en: [
+      ["Coffee Latte","latte.jpg"],
+      ["Americano","americano.jpg"],
+      ["Espresso","espresso.jpg"],
+      ["Lungo","lungo.jpg"],
+      ["Cappuccino","cappuccino.jpg"],
+      ["Latte Macchiato","latte_macchiato.jpg"],
+      ["Ristretto","ristretto.jpg"],
+      ["Ristretto Bianco","ristretto_bianco.jpg"],
+      ["Cortado","cortado.jpg"],
+      ["Flat White","flat_white.jpg"],
+      ["Espresso Macchiato","espresso_macchiato.jpg"],
+      ["Doppio","doppio.jpg"],
+      ["Tea","tea.jpg"]
+    ]
+  },
+  cold: {
+    tr: [
+      ["Iced Latte","iced_latte.jpg"],
+      ["Iced Americano","iced_americano.jpg"],
+      ["Cold Brew","cold_brew.jpg"],
+      ["Cool Lime","cool_lime.jpg"]
+    ],
+    en: [
+      ["Iced Latte","iced_latte.jpg"],
+      ["Iced Americano","iced_americano.jpg"],
+      ["Cold Brew","cold_brew.jpg"],
+      ["Cool Lime","cool_lime.jpg"]
+    ]
+  }
+};
+
+const $ = (id) => document.getElementById(id);
+
+function renderMenu(type){
+  const list = $(type + "List");
+  list.innerHTML = "";
+
+  DATA[type][lang].forEach(([name,file])=>{
+    const item = document.createElement("div");
+    item.className = "menu-item";
+    item.innerHTML = `
+      <img src="images/${file}" alt="${name}">
+      <div class="menu-name">${name}</div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function openMenu(type){
+  $("home").classList.add("hidden");
+  $("hot").classList.add("hidden");
+  $("cold").classList.add("hidden");
+  $(type).classList.remove("hidden");
+  renderMenu(type);
+  window.scrollTo(0,0);
+}
+
+function goHome(){
+  $("hot").classList.add("hidden");
+  $("cold").classList.add("hidden");
+  $("home").classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+
+function setLang(newLang){
+  lang = newLang;
+
+  $("langTR").classList.toggle("active", lang === "tr");
+  $("langEN").classList.toggle("active", lang === "en");
+
+  // HOME başlıklar
+  $("txtHomeHot").textContent  = (lang==="tr") ? "Sıcak İçecekler" : "Hot Drinks";
+  $("txtHomeCold").textContent = (lang==="tr") ? "Soğuk İçecekler" : "Cold Drinks";
+
+  // Menü başlıklar
+  $("txtHotTitle").textContent  = (lang==="tr") ? "☕ Sıcak İçecekler" : "☕ Hot Drinks";
+  $("txtColdTitle").textContent = (lang==="tr") ? "🧊 Soğuk İçecekler" : "🧊 Cold Drinks";
+
+  // Kullanıcı menüdeyse listeyi de güncelle
+  if(!$("hot").classList.contains("hidden")) renderMenu("hot");
+  if(!$("cold").classList.contains("hidden")) renderMenu("cold");
+}
+
+/* EVENTS */
+$("btnHot").addEventListener("click", ()=>openMenu("hot"));
+$("btnCold").addEventListener("click", ()=>openMenu("cold"));
+$("backHot").addEventListener("click", goHome);
+$("backCold").addEventListener("click", goHome);
+$("logo").addEventListener("click", goHome);
+
+$("langTR").addEventListener("click", ()=>setLang("tr"));
+$("langEN").addEventListener("click", ()=>setLang("en"));
+</script>
+
+</body>
+</html>
